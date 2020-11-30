@@ -1,1 +1,1 @@
-redirect.html
+index.html
