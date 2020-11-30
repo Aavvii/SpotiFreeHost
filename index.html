@@ -7,6 +7,8 @@
 </head>
 <body>
     <script>
+        const queryString = window.location.search;
+        console.log(queryString);
         const urlParams = new URLSearchParams(queryString);
         var product = urlParams.get('code')
         document.write(product)
