@@ -7,6 +7,7 @@ import signal
 import time
 import webbrowser
 from os import path
+import psutil
 
 import win32api
 import wmi
@@ -24,7 +25,10 @@ url_for_initial_get = "https://accounts.spotify.com/authorize?client_id=ba4d42f1
 
 spotify_path = ""
 
-checking_frequency = 2.5
+checking_frequency = 1
+
+spotify_pid = 0
+spotify_runs = True
 
 
 def get_spotify_path():
@@ -32,7 +36,7 @@ def get_spotify_path():
     if not path.exists("path.txt"):
         print("It would seem this is your first time running SpotyFree on this machine.")
         path_new = input("Please write the path to the Spotify launcher. It might be at C:\\Users\\<your user name>\\AppData\\Roaming\\Spotify\\SpotifyLauncher.exe\n")
-        while not path.exists(path_new) or path_new.split("\\")[-1] != "SpotifyLauncher.exe":
+        while not path.exists(path_new) :
             path_new = input("Launcher could not be found. Please try again\n")
         print("Path seems valid")
         f = open("path.txt", "w")
@@ -117,6 +121,13 @@ def kill_spotify():
                 pass
 
 
+def kill_spotify_by_pid():
+    try:
+        os.kill(spotify_pid, signal.CTRL_C_EVENT)
+    except:
+        pass
+
+
 def start_spotify():
     os.system(spotify_path)
 
@@ -133,23 +144,46 @@ def make_sure_spotify_runs():
         start_spotify()
 
 
+def get_spotify_pid():
+    global spotify_pid
+    f = wmi.WMI()
+    # Iterating through all the running processes
+    for process in f.Win32_Process():
+        if process.Name == "Spotify.exe":
+            spotify_pid = process.ProcessId
+            return
+
+
 def run():
     print("SpotyFree will now open your browser.")
+    get_spotify_pid()
     token, refresh_token = get_init_token()
+    token_timer = 0
+    os.system('cls')
     print("Service started!")
     while True:
+        if not psutil.pid_exists(spotify_pid):
+            start_spotify()
+            get_spotify_pid()
+
         track_info = get_played_track_type(token)
         if track_info == "ad":
-            kill_spotify()
+            #kill_spotify()
+            kill_spotify_by_pid()
             start_spotify()
+            get_spotify_pid() # function call that takes a long time
             time.sleep(0.5)
             resume_play()
             current_time = time.localtime()
             current_time = time.strftime("%H:%M:%S", current_time)
             print("Skipped an ad at", current_time)
-        if track_info == "Failed":
-            get_next_token(refresh_token)
-        time.sleep(checking_frequency)
+        else:
+            if token_timer >= 1800:
+                token = get_next_token(refresh_token)
+                token_timer = 0
+            else:
+                time.sleep(checking_frequency)
+        token_timer += 1
 
 
 if __name__ == '__main__':
