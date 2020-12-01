@@ -171,12 +171,12 @@ def run():
             #kill_spotify()
             kill_spotify_by_pid()
             start_spotify()
-            get_spotify_pid() # function call that takes a long time
-            time.sleep(0.5)
+            #time.sleep(0.5)
             resume_play()
             current_time = time.localtime()
             current_time = time.strftime("%H:%M:%S", current_time)
             print("Skipped an ad at", current_time)
+            get_spotify_pid()  # function call that takes a long time
         else:
             if token_timer >= 1800:
                 token = get_next_token(refresh_token)
