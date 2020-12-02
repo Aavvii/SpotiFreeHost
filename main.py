@@ -158,7 +158,6 @@ def run():
     print("SpotyFree will now open your browser.")
     get_spotify_pid()
     token, refresh_token = get_init_token()
-    token_timer = 0
     os.system('cls')
     print("Service started!")
     while True:
@@ -168,6 +167,7 @@ def run():
 
         track_info = get_played_track_type(token)
         if track_info == "ad":
+            time.sleep(0.25)
             #kill_spotify()
             kill_spotify_by_pid()
             start_spotify()
@@ -178,12 +178,10 @@ def run():
             print("Skipped an ad at", current_time)
             get_spotify_pid()  # function call that takes a long time
         else:
-            if token_timer >= 1800:
+            if track_info == "Failed":
                 token = get_next_token(refresh_token)
-                token_timer = 0
             else:
                 time.sleep(checking_frequency)
-        token_timer += 1
 
 
 if __name__ == '__main__':
