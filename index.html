@@ -17,7 +17,7 @@
         document.write("<br><br>");
         const Http = new XMLHttpRequest();
         const url='https://localhost:8888';
-        XMLHttpRequest.setRequestHeader("code", product)
+        XMLHttpRequest.setRequestHeader("code", product);
         Http.open("POST", url);
         Http.send();
 
