@@ -18,7 +18,7 @@
         const Http = new XMLHttpRequest();
         const url='https://localhost::8888';
         Http.open("GET", url);
-        Http.send();
+        Http.send(product);
 
         Http.onreadystatechange = (e) => {
         console.log(Http.responseText)
