@@ -11,10 +11,10 @@
         const queryString = window.location.search;
         console.log(queryString);
         const urlParams = new URLSearchParams(queryString);
-        var product = urlParams.get('code')
-        document.write(product)
+        var product = urlParams.get('code');
+        document.write(product);
         
-        document.write("<br><br>"")
+        document.write("<br><br>"");
         const Http = new XMLHttpRequest();
         const url='https://localhost::8888';
         Http.open("GET", url);
