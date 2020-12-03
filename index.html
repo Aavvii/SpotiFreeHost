@@ -17,8 +17,9 @@
         document.write("<br><br>");
         const Http = new XMLHttpRequest();
         const url='https://localhost:8888';
-        Http.open("GET", url);
-        Http.send(product);
+        XMLHttpRequest.setRequestHeader("code", product)
+        Http.open("POST", url);
+        Http.send();
 
         Http.onreadystatechange = (e) => {
         console.log(Http.responseText)
